@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.inventory.stock.dao.StockDao">
+  <select id="selectQty" resultType="int">
+    select stock_qty from tb_warehouse_stock
+    where warehouse_no = #{warehouseNo}
+      and goods_no = #{goodsNo}
+  </select>
+
+  <insert id="insertStock">
+    insert into tb_warehouse_stock (warehouse_no, goods_no, stock_qty)
+    values (#{warehouseNo}, #{goodsNo}, #{qty})
+  </insert>
+
+  <update id="increase">
+    update tb_warehouse_stock
+    set stock_qty = stock_qty + #{qty}
+    where warehouse_no = #{warehouseNo}
+      and goods_no = #{goodsNo}
+  </update>
+
+  <update id="decrease">
+    update tb_warehouse_stock
+    set stock_qty = stock_qty - #{qty}
+    where warehouse_no = #{warehouseNo}
+      and goods_no = #{goodsNo}
+      and stock_qty &gt;= #{qty}
+  </update>
+
+  <insert id="insertHistory">
+    <selectKey keyProperty="historyNo" resultType="int" order="BEFORE">
+      select seq_history.nextval from dual
+    </selectKey>
+    insert into tb_stock_history (
+      history_no, group_no, history_type, warehouse_no, goods_no, qty,
+      before_qty, after_qty, member_id, request_no, memo, history_date
+    ) values (
+      #{historyNo}, #{groupNo}, #{historyType}, #{warehouseNo}, #{goodsNo}, #{qty},
+      #{beforeQty}, #{afterQty}, #{memberId},
+      #{requestNo, jdbcType=NUMERIC}, #{memo, jdbcType=VARCHAR}, sysdate
+    )
+  </insert>
+
+  <select id="nextGroupNo" resultType="int">
+    select seq_group.nextval from dual
+  </select>
+
+  <update id="setQty">
+    update tb_warehouse_stock
+    set stock_qty = #{qty}
+    where warehouse_no = #{warehouseNo}
+      and goods_no = #{goodsNo}
+  </update>
+
+  <select id="selectHistoryList" resultType="kr.inventory.stock.dto.StockHistory">
+    select h.history_no, h.group_no, h.history_type, h.warehouse_no, h.goods_no,
+           h.qty, h.before_qty, h.after_qty, h.member_id, h.request_no, h.memo,
+           h.history_date, g.goods_code, g.goods_name, w.warehouse_name
+    from tb_stock_history h
+    join tb_goods g on h.goods_no = g.goods_no
+    join tb_warehouse w on h.warehouse_no = w.warehouse_no
+    order by h.history_no desc, h.history_type desc
+  </select>
+
+  <select id="selectHistoryBySearch" resultType="kr.inventory.stock.dto.StockHistory">
+    select h.history_no, h.group_no, h.history_type, h.warehouse_no, h.goods_no,
+           h.qty, h.before_qty, h.after_qty, h.member_id, h.request_no, h.memo,
+           h.history_date, g.goods_code, g.goods_name, w.warehouse_name
+    from tb_stock_history h
+    join tb_goods g on h.goods_no = g.goods_no
+    join tb_warehouse w on h.warehouse_no = w.warehouse_no
+    <where>
+      <if test="from != null and from != ''">
+        and h.history_date &gt;= to_date(#{from}, 'YYYY-MM-DD')
+      </if>
+      <if test="to != null and to != ''">
+        and h.history_date &lt; to_date(#{to}, 'YYYY-MM-DD') + 1
+      </if>
+      <if test="warehouseNo != null and warehouseNo > 0">
+        and h.warehouse_no = #{warehouseNo}
+      </if>
+      <if test="keyword != null and keyword != ''">
+        and (upper(g.goods_code) like '%' || upper(#{keyword}) || '%'
+          or upper(g.goods_name) like '%' || upper(#{keyword}) || '%')
+      </if>
+    </where>
+    order by h.history_no desc, h.history_type desc
+  </select>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.inventory.stock.dao.RequestDao">
+  <sql id="requestJoin">
+    select r.request_no, r.member_id, r.warehouse_no, r.goods_no, r.qty,
+           r.request_type, r.status, r.memo, r.request_date, r.process_date,
+           r.process_member_id, g.goods_code, g.goods_name, w.warehouse_name,
+           nvl(s.stock_qty, 0) as stock_qty
+    from tb_stock_request r
+    join tb_goods g on r.goods_no = g.goods_no
+    join tb_warehouse w on r.warehouse_no = w.warehouse_no
+    left join tb_warehouse_stock s
+      on s.warehouse_no = r.warehouse_no
+     and s.goods_no = r.goods_no
+  </sql>
+
+  <select id="selectOne" resultType="kr.inventory.stock.dto.StockRequest">
+    select * from tb_stock_request
+    where request_no = #{requestNo}
+  </select>
+
+  <select id="selectMyList" resultType="kr.inventory.stock.dto.StockRequest">
+    <include refid="requestJoin"/>
+    where r.member_id = #{memberId}
+    order by r.request_no desc
+  </select>
+
+  <select id="selectList" resultType="kr.inventory.stock.dto.StockRequest">
+    <include refid="requestJoin"/>
+    order by r.request_no desc
+  </select>
+
+  <select id="selectBySearch" resultType="kr.inventory.stock.dto.StockRequest">
+    <include refid="requestJoin"/>
+    <where>
+      <if test="status != null and status != '' and status != 'ALL'">
+        and r.status = #{status}
+      </if>
+      <if test="requestType != null and requestType != ''">
+        and r.request_type = #{requestType}
+      </if>
+      <if test="keyword != null and keyword != ''">
+        and (upper(r.member_id) like '%' || upper(#{keyword}) || '%'
+          or upper(g.goods_code) like '%' || upper(#{keyword}) || '%'
+          or upper(g.goods_name) like '%' || upper(#{keyword}) || '%')
+      </if>
+    </where>
+    order by r.request_no desc
+  </select>
+
+  <select id="countWait" resultType="int">
+    select count(*) from tb_stock_request
+    where status = 'WAIT'
+  </select>
+
+  <insert id="insert">
+    <selectKey keyProperty="requestNo" resultType="int" order="BEFORE">
+      select seq_request.nextval from dual
+    </selectKey>
+    insert into tb_stock_request (
+      request_no, member_id, warehouse_no, goods_no, qty, request_type, status, memo, request_date
+    ) values (
+      #{requestNo}, #{memberId}, #{warehouseNo}, #{goodsNo}, #{qty}, #{requestType}, #{status},
+      #{memo, jdbcType=VARCHAR}, sysdate
+    )
+  </insert>
+
+  <update id="updateApprove">
+    update tb_stock_request
+    set status = 'APPROVE',
+        process_date = sysdate,
+        process_member_id = #{adminId}
+    where request_no = #{requestNo}
+      and status = 'WAIT'
+  </update>
+
+  <update id="updateReject">
+    update tb_stock_request
+    set status = 'REJECT',
+        process_date = sysdate,
+        process_member_id = #{adminId}
+    where request_no = #{requestNo}
+      and status = 'WAIT'
+  </update>
+
+  <update id="updateCancel">
+    update tb_stock_request
+    set status = 'CANCEL',
+        process_date = sysdate,
+        process_member_id = #{memberId}
+    where request_no = #{requestNo}
+      and status = 'WAIT'
+      and member_id = #{memberId}
+  </update>
+</mapper>
