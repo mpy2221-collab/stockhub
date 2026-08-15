@@ -1,0 +1,13 @@
+target/
+.tools/
+bin/
+.playwright-mcp/
+.idea/
+.cursor/
+*.iml
+.classpath
+.project
+.settings/
+*.log
+src/main/resources/mail.properties
+src/main/resources/db.properties

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.inventory.goods.dao.GoodsDao">
+  <sql id="goodsBase">
+    g.goods_no, g.goods_code, g.goods_name, g.category_no,
+    c.category_name as category,
+    g.unit, g.safety_qty, g.unit_price, g.image_path, g.use_yn
+  </sql>
+  <sql id="goodsGroup">
+    g.goods_no, g.goods_code, g.goods_name, g.category_no, c.category_name,
+    g.unit, g.safety_qty, g.unit_price, g.image_path, g.use_yn
+  </sql>
+  <sql id="joinCategory">
+    left join tb_category c on g.category_no = c.category_no
+  </sql>
+
+  <select id="selectAll" resultType="kr.inventory.goods.dto.Goods">
+    select <include refid="goodsBase"/>,
+           nvl(sum(s.stock_qty), 0) as stock_qty,
+           nvl(sum(s.stock_qty), 0) as total_qty
+    from tb_goods g
+    <include refid="joinCategory"/>
+    left join tb_warehouse_stock s on g.goods_no = s.goods_no
+    where g.use_yn = 'Y'
+    group by <include refid="goodsGroup"/>
+    order by g.goods_no desc
+  </select>
+
+  <select id="selectList" resultType="kr.inventory.goods.dto.Goods">
+    select <include refid="goodsBase"/>,
+           nvl(sum(s.stock_qty), 0) as stock_qty,
+           nvl(sum(s.stock_qty), 0) as total_qty
+    from tb_goods g
+    <include refid="joinCategory"/>
+    left join tb_warehouse_stock s on g.goods_no = s.goods_no
+    where g.use_yn = 'Y'
+    <if test="keyword != null and keyword != ''">
+      and (g.goods_name like '%' || #{keyword} || '%'
+        or g.goods_code like '%' || #{keyword} || '%')
+    </if>
+    group by <include refid="goodsGroup"/>
+    order by g.goods_no desc
+  </select>
+
+  <select id="selectStockList" resultType="kr.inventory.goods.dto.Goods">
+    select <include refid="goodsBase"/>,
+           nvl(tot.total_qty, 0) as total_qty,
+           <choose>
+             <when test="warehouseNo != null and warehouseNo > 0">
+               nvl(wh.wh_qty, 0) as stock_qty
+             </when>
+             <otherwise>
+               nvl(tot.total_qty, 0) as stock_qty
+             </otherwise>
+           </choose>
+    from tb_goods g
+    <include refid="joinCategory"/>
+    left join (
+      select goods_no, sum(stock_qty) as total_qty
+      from tb_warehouse_stock
+      group by goods_no
+    ) tot on tot.goods_no = g.goods_no
+    <if test="warehouseNo != null and warehouseNo > 0">
+      left join (
+        select goods_no, stock_qty as wh_qty
+        from tb_warehouse_stock
+        where warehouse_no = #{warehouseNo}
+      ) wh on wh.goods_no = g.goods_no
+    </if>
+    where g.use_yn = 'Y'
+    <if test="keyword != null and keyword != ''">
+      and (g.goods_name like '%' || #{keyword} || '%'
+        or g.goods_code like '%' || #{keyword} || '%')
+    </if>
+    <if test="categoryNo != null and categoryNo > 0">
+      and g.category_no = #{categoryNo}
+    </if>
+    order by g.goods_no desc
+  </select>
+
+  <select id="selectAdminList" resultType="kr.inventory.goods.dto.Goods">
+    select <include refid="goodsBase"/>,
+           nvl(sum(s.stock_qty), 0) as stock_qty,
+           nvl(sum(s.stock_qty), 0) as total_qty
+    from tb_goods g
+    <include refid="joinCategory"/>
+    left join tb_warehouse_stock s on g.goods_no = s.goods_no
+    group by <include refid="goodsGroup"/>
+    order by g.goods_no desc
+  </select>
+
+  <select id="selectAdminListBySearch" resultType="kr.inventory.goods.dto.Goods">
+    select <include refid="goodsBase"/>,
+           nvl(sum(s.stock_qty), 0) as stock_qty,
+           nvl(sum(s.stock_qty), 0) as total_qty
+    from tb_goods g
+    <include refid="joinCategory"/>
+    left join tb_warehouse_stock s on g.goods_no = s.goods_no
+    <where>
+      <if test="keyword != null and keyword != ''">
+        and (upper(g.goods_name) like '%' || upper(#{keyword}) || '%'
+          or upper(g.goods_code) like '%' || upper(#{keyword}) || '%')
+      </if>
+      <if test="useYn != null and useYn != ''">
+        and g.use_yn = #{useYn}
+      </if>
+    </where>
+    group by <include refid="goodsGroup"/>
+    order by g.goods_no desc
+  </select>
+
+  <select id="selectOne" resultType="kr.inventory.goods.dto.Goods">
+    select <include refid="goodsBase"/>,
+           nvl(sum(s.stock_qty), 0) as stock_qty,
+           nvl(sum(s.stock_qty), 0) as total_qty
+    from tb_goods g
+    <include refid="joinCategory"/>
+    left join tb_warehouse_stock s on g.goods_no = s.goods_no
+    where g.goods_no = #{goodsNo}
+    group by <include refid="goodsGroup"/>
+  </select>
+
+  <select id="countByCode" resultType="int">
+    select count(*) from tb_goods
+    where goods_code = #{goodsCode}
+  </select>
+
+  <select id="countByCodeExcept" resultType="int">
+    select count(*) from tb_goods
+    where goods_code = #{goodsCode}
+      and goods_no != #{goodsNo}
+  </select>
+
+  <insert id="insert">
+    insert into tb_goods (
+      goods_no, goods_code, goods_name, category_no, unit,
+      safety_qty, unit_price, image_path, use_yn
+    ) values (
+      seq_goods.nextval, #{goodsCode}, #{goodsName}, #{categoryNo}, #{unit},
+      #{safetyQty}, #{unitPrice}, #{imagePath}, #{useYn}
+    )
+  </insert>
+
+  <update id="update">
+    update tb_goods
+    set goods_code = #{goodsCode},
+        goods_name = #{goodsName},
+        category_no = #{categoryNo},
+        unit = #{unit},
+        safety_qty = #{safetyQty},
+        unit_price = #{unitPrice},
+        image_path = #{imagePath},
+        use_yn = #{useYn}
+    where goods_no = #{goodsNo}
+  </update>
+
+  <select id="selectWarehouseStocks" resultType="kr.inventory.goods.dto.WarehouseStock">
+    select w.warehouse_no, w.warehouse_name, nvl(s.stock_qty, 0) as stock_qty
+    from tb_warehouse w
+    left join tb_warehouse_stock s
+      on w.warehouse_no = s.warehouse_no
+     and s.goods_no = #{goodsNo}
+    where w.use_yn = 'Y'
+    order by w.warehouse_no
+  </select>
+
+  <select id="countAll" resultType="int">
+    select count(*) from tb_goods
+  </select>
+</mapper>

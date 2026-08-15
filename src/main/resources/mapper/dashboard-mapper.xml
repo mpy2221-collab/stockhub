@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.inventory.admin.dao.DashboardDao">
+  <select id="sumActiveStock" resultType="int">
+    select nvl(sum(s.stock_qty), 0)
+    from tb_warehouse_stock s
+    join tb_goods g on s.goods_no = g.goods_no
+    where g.use_yn = 'Y'
+  </select>
+
+  <select id="selectWarehouseStock" resultType="kr.inventory.admin.dto.ChartPoint">
+    select w.warehouse_name as label,
+           nvl(sum(case when g.use_yn = 'Y' then s.stock_qty end), 0) as value
+    from tb_warehouse w
+    left join tb_warehouse_stock s on w.warehouse_no = s.warehouse_no
+    left join tb_goods g on s.goods_no = g.goods_no
+    where w.use_yn = 'Y'
+    group by w.warehouse_no, w.warehouse_name
+    order by w.warehouse_no
+  </select>
+
+  <select id="selectCategoryStock" resultType="kr.inventory.admin.dto.ChartPoint">
+    select c.category_name as label,
+           nvl(sum(s.stock_qty), 0) as value
+    from tb_category c
+    left join tb_goods g on c.category_no = g.category_no and g.use_yn = 'Y'
+    left join tb_warehouse_stock s on g.goods_no = s.goods_no
+    where c.use_yn = 'Y'
+    group by c.category_no, c.category_name
+    order by c.category_no
+  </select>
+</mapper>
