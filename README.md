@@ -37,11 +37,20 @@ GitHub에서 아래 링크를 누르면 보고서 문서를 볼 수 있습니다
 - jQuery, Chart.js, JsBarcode, Apache POI, Gson
 - HttpSession, jBCrypt, JavaMail
 
+## 데모 계정
+
+비밀번호는 모두 `1234`입니다.
+
+| 구분 | 아이디 | 비밀번호 |
+|---|---|
+| 관리자 | `admin1`, `admin2`, `admin3` | `1234` |
+| 일반 회원 | `user01` ~ `user20` | `1234` |
+
+화면 헤더의 **안내** 버튼에서도 같은 계정을 확인할 수 있습니다.
+
 ## 실행
 
 1. `src/main/resources/db.properties.example` → `db.properties`
 2. `src/main/resources/mail.properties.example` → `mail.properties`
 3. Oracle에 `sql/schema.sql` 반영
 4. `mvn package` 후 Tomcat에 `target/stockhub.war` 배포
-
-로컬 Maven Cargo는 `pom.xml` 기준 **8070**입니다.
