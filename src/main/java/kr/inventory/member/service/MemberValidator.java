@@ -8,7 +8,7 @@ import kr.inventory.member.dto.Member;
  */
 public final class MemberValidator {
   public static final String ID_REGEX = "^[a-z][a-z0-9_]{3,19}$";
-  public static final String PW_REGEX = "^(?=.*[A-Za-z])(?=.*[0-9]).{8,20}$";
+  public static final String PW_REGEX = "^.{4,20}$";
   public static final String NAME_REGEX = "^[가-힣a-zA-Z]{2,20}$";
   public static final String PHONE_REGEX = "^01[016789]-?[0-9]{3,4}-?[0-9]{4}$";
   public static final String ADDR_REGEX = "^.{2,100}$";
@@ -64,7 +64,7 @@ public final class MemberValidator {
       return "아이디는 영문 소문자로 시작하는 4~20자입니다. 영문 소문자, 숫자, _만 쓸 수 있습니다.";
     }
     if ("memberPw".equals(field)) {
-      return "비밀번호는 영문과 숫자를 함께 쓴 8~20자입니다.";
+      return "비밀번호는 4~20자입니다.";
     }
     if ("memberName".equals(field)) {
       return "이름은 한글 또는 영문 2~20자입니다.";

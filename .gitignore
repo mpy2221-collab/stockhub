@@ -11,3 +11,4 @@ bin/
 *.log
 src/main/resources/mail.properties
 src/main/resources/db.properties
+sql/goods-img/

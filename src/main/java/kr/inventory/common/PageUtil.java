@@ -49,6 +49,13 @@ public final class PageUtil {
     request.setAttribute("pageSize", size);
     request.setAttribute("totalPages", pages);
     request.setAttribute("totalCount", total);
+    int win = 5;
+    int start = ((page - 1) / win) * win + 1;
+    int end = Math.min(pages, start + win - 1);
+    request.setAttribute("pageStart", start);
+    request.setAttribute("pageEnd", end);
+    request.setAttribute("pagePrev5", Math.max(1, start - win));
+    request.setAttribute("pageNext5", Math.min(pages, start + win));
     if (total == 0) {
       return src;
     }

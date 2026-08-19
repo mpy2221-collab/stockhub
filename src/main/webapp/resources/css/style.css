@@ -18,6 +18,7 @@ html, body {
 body {
   margin: 0;
   min-height: 100vh;
+  padding-top: 65px;
   display: flex;
   flex-direction: column;
   font-family: "Pretendard", "Malgun Gothic", sans-serif;
@@ -35,6 +36,11 @@ body {
   padding: 36px 0 48px;
 }
 .top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 48;
   background: var(--header);
   color: #fff;
   border-bottom: 1px solid #1e293b;
@@ -45,11 +51,48 @@ body {
   align-items: center;
   min-height: 64px;
 }
+.logo-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .logo {
   color: #fff;
   text-decoration: none;
   font-weight: 700;
   letter-spacing: 0.04em;
+}
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-help {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.nav-help-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+}
+.nav-help:hover {
+  background: var(--accent-hover);
 }
 .top-nav {
   display: flex;
@@ -1068,6 +1111,19 @@ input.is-error,
 .modal-title {
   margin: 0 0 16px;
   font-size: 18px;
+}
+.help-lead {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.help-h {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+.help-account {
+  margin: 0 0 16px;
+  line-height: 1.6;
 }
 .detail-list {
   margin: 0 0 20px;

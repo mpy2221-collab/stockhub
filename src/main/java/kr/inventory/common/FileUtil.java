@@ -11,8 +11,8 @@ import javax.servlet.http.Part;
  * 품목 대표 이미지를 업로드 폴더에 저장하고 지운다.
  */
 public final class FileUtil {
-  // public static final String UPLOAD_DIR = "C:/Temp/stock";
-  public static final String UPLOAD_DIR = "/home/ubuntu/stock_hub";
+  // public static final String UPLOAD_DIR = "/home/ubuntu/stock_hub";
+  public static final String UPLOAD_DIR = "C:/Temp/stock";
   public static final long MAX_BYTES = 5L * 1024 * 1024;
 
   private FileUtil() {

@@ -51,7 +51,7 @@
       </label>
       <label>새 비밀번호
         <input type="password" name="newPw" required autocomplete="new-password"
-          title="영문과 숫자를 함께 쓴 8~20자">
+          title="비밀번호 4~20자">
       </label>
       <button class="btn" type="submit">비밀번호 변경</button>
     </form>

@@ -12,6 +12,20 @@
     <span>사내·매장 창고 재고 관리</span>
   </div>
 </footer>
+<div class="modal" id="helpModal" hidden>
+  <div class="modal-back"></div>
+  <div class="modal-box modal-box-wide" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <h2 class="modal-title" id="helpTitle">StockHub 안내</h2>
+    <p class="help-lead">사내·매장 창고의 현재고와 입출고를 관리하는 웹 시스템입니다. 일반 회원은 재고 조회와 입출고 요청을 하고, 관리자는 품목·창고·입출고 처리와 요청 승인을 합니다.</p>
+    <h3 class="help-h">관리자</h3>
+    <p class="help-account">아이디 <strong>admin1</strong> · 비밀번호 <strong>1234</strong><br>
+      admin2, admin3도 비밀번호가 같습니다.</p>
+    <h3 class="help-h">일반 회원</h3>
+    <p class="help-account">아이디 <strong>user01</strong> · 비밀번호 <strong>1234</strong><br>
+      user01부터 user20까지 쓸 수 있습니다.</p>
+    <button class="btn" type="button" id="helpOk">확인</button>
+  </div>
+</div>
 <%-- 화면에서 modalMsg를 request scope에 넣으면 열린다 --%>
 <div class="modal" id="appModal" hidden
   data-msg="${fn:escapeXml(modalMsg)}" data-focus="${fn:escapeXml(modalFocus)}">
@@ -98,8 +112,8 @@ var MEMBER_RULES = {
     re: /^[a-z][a-z0-9_]{3,19}$/,
     msg: "아이디는 영문 소문자로 시작하는 4~20자입니다. 영문 소문자, 숫자, _만 쓸 수 있습니다."
   },
-  memberPw: { re: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,20}$/, msg: "비밀번호는 영문과 숫자를 함께 쓴 8~20자입니다." },
-  newPw: { re: /^(?=.*[A-Za-z])(?=.*[0-9]).{8,20}$/, msg: "새 비밀번호는 영문과 숫자를 함께 쓴 8~20자입니다." },
+  memberPw: { re: /^.{4,20}$/, msg: "비밀번호는 4~20자입니다." },
+  newPw: { re: /^.{4,20}$/, msg: "새 비밀번호는 4~20자입니다." },
   memberName: { re: /^[가-힣a-zA-Z]{2,20}$/, msg: "이름은 한글 또는 영문 2~20자입니다." },
   memberPhone: {
     re: /^01[016789]-?[0-9]{3,4}-?[0-9]{4}$/,
@@ -151,9 +165,44 @@ $(function () {
     setNavOpen(false);
   });
 
+  var navSwipe = { x: 0, y: 0 };
+  $(document).on("touchstart", "#navDrawer, #navMask", function (e) {
+    if (!document.body.classList.contains("nav-open")) {
+      return;
+    }
+    var t = e.originalEvent.touches[0];
+    navSwipe.x = t.clientX;
+    navSwipe.y = t.clientY;
+  });
+  $(document).on("touchend", "#navDrawer, #navMask", function (e) {
+    if (!document.body.classList.contains("nav-open")) {
+      return;
+    }
+    var t = e.originalEvent.changedTouches[0];
+    var dx = t.clientX - navSwipe.x;
+    var dy = t.clientY - navSwipe.y;
+    if (dx < -48 && Math.abs(dx) > Math.abs(dy)) {
+      setNavOpen(false);
+    }
+  });
+
+  function setHelpOpen(open) {
+    var el = document.getElementById("helpModal");
+    if (el) {
+      el.hidden = !open;
+    }
+  }
+  $("#helpOpen").on("click", function () {
+    setHelpOpen(true);
+  });
+  $("#helpOk, #helpModal .modal-back").on("click", function () {
+    setHelpOpen(false);
+  });
+
   $(document).on("keydown", function (e) {
     if (e.key === "Escape") {
       StockModal.close();
+      setHelpOpen(false);
       setNavOpen(false);
     }
   });
