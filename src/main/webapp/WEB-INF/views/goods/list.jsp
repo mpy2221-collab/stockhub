@@ -54,7 +54,7 @@
             <c:choose>
               <c:when test="${not empty g.imagePath}">
                 <img class="goods-thumb" alt="${g.goodsName}"
-                  src="${pageContext.request.contextPath}/goods/image?goodsNo=${g.goodsNo}"
+                  src="${pageContext.request.contextPath}/goods/image?goodsNo=${g.goodsNo}&v=${initParam.assetVersion}"
                   onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/resources/img/goods-default.png'">
               </c:when>
               <c:otherwise>

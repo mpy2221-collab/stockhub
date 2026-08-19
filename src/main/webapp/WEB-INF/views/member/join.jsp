@@ -22,7 +22,7 @@
       </label>
       <label>비밀번호
         <input type="password" name="memberPw" required autocomplete="new-password"
-          placeholder="영문+숫자 8~20자" title="영문과 숫자를 함께 쓴 8~20자">
+          placeholder="4~20자" title="비밀번호 4~20자">
       </label>
       <label>이름
         <input type="text" name="memberName" required placeholder="이름을 입력하세요"

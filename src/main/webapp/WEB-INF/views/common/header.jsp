@@ -15,14 +15,21 @@
 <body>
 <header class="top">
   <div class="wrap top-inner">
-    <a class="logo" href="${pageContext.request.contextPath}${empty loginMember ? '/loginFrm' : '/home'}">StockHub</a>
-    <button type="button" class="nav-toggle" id="navToggle"
-      aria-expanded="false" aria-controls="navDrawer" aria-label="메뉴">
-      <span class="nav-toggle-bar"></span>
-      <span class="nav-toggle-bar"></span>
-      <span class="nav-toggle-bar"></span>
-    </button>
-    <nav class="top-nav">
+    <div class="logo-brand">
+      <a class="logo" href="${pageContext.request.contextPath}${empty loginMember ? '/loginFrm' : '/home'}">StockHub</a>
+      <button type="button" class="nav-help" id="helpOpen">
+        <span class="nav-help-mark" aria-hidden="true">?</span>
+        안내
+      </button>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="nav-toggle" id="navToggle"
+        aria-expanded="false" aria-controls="navDrawer" aria-label="메뉴">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="top-nav">
       <c:choose>
         <c:when test="${not empty loginMember}">
           <a href="${pageContext.request.contextPath}/mypage">마이페이지</a>
@@ -38,6 +45,7 @@
         </c:otherwise>
       </c:choose>
     </nav>
+    </div>
   </div>
 </header>
 <div class="nav-mask" id="navMask" hidden></div>

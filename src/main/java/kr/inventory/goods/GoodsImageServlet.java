@@ -39,6 +39,8 @@ public class GoodsImageServlet extends HttpServlet {
       return;
     }
     response.setContentType(FileUtil.contentType(goods.getImagePath()));
+    response.setHeader("Cache-Control", "no-cache");
+    response.setDateHeader("Last-Modified", file.lastModified());
     response.setContentLengthLong(file.length());
     try (FileInputStream in = new FileInputStream(file);
         OutputStream out = response.getOutputStream()) {

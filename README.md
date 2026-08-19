@@ -45,8 +45,8 @@ GitHub에서 아래 링크를 누르면 보고서 문서를 볼 수 있습니다
 
 ## 개발 도구
 
-구현·문서 작성과 Git 작업은 **Cursor AI**로 진행했습니다.  
-Cursor의 **MCP(Model Context Protocol)**로 외부 도구를 편집기에 붙여, 코드 작성과 저장소 작업·화면 확인을 이어서 처리했습니다.
+코드·문서의 설계와 구현은 직접 하고, **Cursor AI**는 보조로만 썼습니다.  
+**MCP(Model Context Protocol)**는 적극적으로 활용했습니다. GitHub, Playwright 등 외부 도구를 편집기에 붙여 저장소 작업과 화면 확인을 이어서 처리했습니다.
 
 | MCP | 용도 |
 | --- | --- |
@@ -55,8 +55,6 @@ Cursor의 **MCP(Model Context Protocol)**로 외부 도구를 편집기에 붙�
 | Sequential Thinking | 요구사항·재고 규칙을 단계별로 정리 |
 | Notion Toolbox | 기획·보고서 초안과 작업 기록 |
 | Context7 | 라이브러리·API 문서 조회 |
-
-요구사항과 재고 규칙은 사람이 정하고, Cursor는 그 규칙에 맞춰 Servlet·JSP·MyBatis 코드와 보고서를 작성하는 데 썼습니다.
 
 ## 데모 계정
 

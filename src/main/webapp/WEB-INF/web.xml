@@ -9,7 +9,7 @@
   <!-- css·js 브라우저 캐시를 끊는 값. 정적 파일을 고치면 올린다 -->
   <context-param>
     <param-name>assetVersion</param-name>
-    <param-value>2026081534</param-value>
+    <param-value>2026081625</param-value>
   </context-param>
   <session-config>
     <session-timeout>30</session-timeout>
