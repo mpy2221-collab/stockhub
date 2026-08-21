@@ -19,7 +19,7 @@
       <a class="logo" href="${pageContext.request.contextPath}${empty loginMember ? '/loginFrm' : '/home'}">StockHub</a>
       <button type="button" class="nav-help" id="helpOpen">
         <span class="nav-help-mark" aria-hidden="true">?</span>
-        안내+
+        안내
       </button>
     </div>
     <div class="top-actions">
