@@ -1,6 +1,7 @@
 package kr.inventory.stock;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +26,7 @@ public class AdminStockHistoryServlet extends HttpServlet {
     boolean first = request.getParameter("from") == null && request.getParameter("to") == null;
     if (first) {
       search.setFrom("2025-01-01");
-      search.setTo("2026-08-31");
+      search.setTo(LocalDate.now().toString());
     } else {
       search.setFrom(trim(request.getParameter("from")));
       search.setTo(trim(request.getParameter("to")));
